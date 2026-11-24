@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stitch Log</title>
+<meta name="description" content="A project hub for tracking knitting and crochet projects and goals. Everything stays in your browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500..800;1,500..800&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Optional: drop your licensed Dream Avenue files into a "fonts" folder next to this page (DreamAvenue.woff2, .otf or .ttf) and it is used automatically. Without them, Playfair Display is used. */
+@font-face{font-family:"Dream Avenue";src:local("Dream Avenue"),local("DreamAvenue"),url("fonts/DreamAvenue.woff2") format("woff2"),url("fonts/DreamAvenue.otf") format("opentype"),url("fonts/DreamAvenue.ttf") format("truetype");font-weight:100 900;font-style:normal;font-display:swap}
+:root{--cream:#e8e7d6;--paper:#f3f2e6;--stone:#cecfbf;--olive:#626736;--bark:#4b4835;--rust:#793c05;--rule:#4b483540;--head:"Dream Avenue","Playfair Display",Georgia,serif;--body:"Jost","Avenir Next","Century Gothic",system-ui,sans-serif}
+*{box-sizing:border-box}
+html{background:#e4e2d0}
+body{margin:0;min-height:100vh;font:400 16px/1.6 var(--body);color:var(--bark);background:linear-gradient(160deg,#eeeddf,#e1dfcc)}
+.wrap{max-width:1040px;margin:0 auto;padding:22px 20px 90px}
+h1,h2,h3{margin:0;font-family:var(--head);font-weight:600;line-height:1.1;color:var(--olive)}
+h1{font-size:clamp(3rem,9vw,5.2rem);letter-spacing:-.01em}
+h1 em,h2 em{font-style:italic}
+h2{font-size:2.3rem;margin:0}
+h3{font-size:1.35rem}
+em{font-style:italic}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;border:1px solid var(--olive);background:var(--olive);color:var(--paper);padding:7px 20px;border-radius:999px;font-weight:500;font-size:.95rem}
+button:hover{background:var(--bark);border-color:var(--bark)}
+button.ghost{background:transparent;color:var(--olive)}
+button.ghost:hover{background:#62673618}
+button.x{border:0;background:none;color:#7d7a62;padding:2px 8px;font-size:1.05rem;line-height:1}
+button.x:hover{color:var(--rust);background:none}
+:focus-visible{outline:2px solid var(--rust);outline-offset:2px}
+input[type=text],input[type=number]{background:#faf9f0;border:1px solid #b9b7a2;border-radius:10px;padding:8px 12px;width:100%}
+input[type=text]:focus,input[type=number]:focus{outline:none;border-color:var(--olive);box-shadow:0 0 0 3px #62673633}
+.pill{display:inline-block;border:1px solid var(--bark);border-radius:999px;padding:1px 16px;font-size:.85rem;background:#ffffff40}
+.topbar{display:flex;justify-content:space-between;align-items:center}
+.sub{color:#7a775f;margin:2px 0 0;font-size:.95rem}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.between{justify-content:space-between}.end{justify-content:flex-end}
+.intro{position:relative;padding:48px 0 34px;overflow:hidden}
+.intro p{max-width:420px;margin:14px 0 20px}
+.deco{position:absolute;right:-20px;top:10px;width:380px;height:300px;opacity:.55;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 380 300' fill='none' stroke='%23626736' stroke-width='1.200'%3E%3Cpath d='M130 20h170l-60 60H70zM70 80h170l-60 60H10zM190 80l60 60h170M250 140h130l-60 60H190zM130 200h170l-60 60H70z'/%3E%3C/svg%3E") no-repeat right top/contain}
+.panel{border-radius:24px;padding:30px 32px;margin-top:10px}
+.dark{background:var(--olive);color:var(--cream)}
+.dark h2,.dark h3{color:var(--paper)}
+.dark .sub{color:#d6d5bd}
+.dark button.ghost{color:var(--paper);border-color:#e8e7d680}
+.dark button.ghost:hover{background:#ffffff18}
+.goals{display:grid;grid-template-columns:repeat(3,1fr);margin-top:20px;border-top:1px solid #e8e7d666}
+.goal{padding:20px 24px 4px 0}
+.goal+.goal{border-left:1px solid #e8e7d666;padding-left:24px}
+.goal h3{font-style:italic}
+.goal .n{font-family:var(--head);font-weight:600;font-size:3.2rem;line-height:1.05;margin-top:10px;color:var(--paper)}
+.goal .n small{font:400 .95rem var(--body);color:#d6d5bd}
+.track{height:14px;border-radius:999px;background:#0000002e;overflow:hidden;margin:12px 0 10px}
+.track i{display:block;height:100%;border-radius:999px;transition:width .4s;background-color:var(--paper);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='14'%3E%3Cpath d='M1.500 2.500L5 11.500L8.500 2.500' fill='none' stroke='%23626736' stroke-opacity='.55' stroke-width='1.600' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+.light .track,.track.l{background:#cecfbf}
+.track.l i{background-color:var(--olive);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='14'%3E%3Cpath d='M1.500 2.500L5 11.500L8.500 2.500' fill='none' stroke='%23fff' stroke-opacity='.5' stroke-width='1.600' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+.track.l.r i{background-color:var(--rust)}.track.l.s i{background-color:#9a9876}
+.tag{display:inline-block;border:1px solid #e8e7d699;border-radius:999px;padding:1px 14px;font-size:.85rem;margin-top:4px}
+.st,.chip{display:inline-block;border-radius:999px;padding:1px 14px;font-size:.85rem;font-weight:500;border:1px solid #9a9876}
+.st-Future{--c:#9a9876}.st-Current{--c:var(--olive)}.st-Finished{--c:var(--rust)}
+.st.st-Future,.chip.on.st-Future{background:var(--stone);color:var(--bark);border-color:#9a9876}
+.st.st-Current,.chip.on.st-Current{background:var(--olive);color:var(--paper);border-color:var(--olive)}
+.st.st-Finished,.chip.on.st-Finished{background:var(--rust);color:var(--cream);border-color:var(--rust)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 4px;align-items:center}
+.chip{background:transparent;color:var(--bark);padding:3px 16px}
+.chip:hover{background:#4b483514;border-color:var(--bark)}
+.chip[data-setst]::before,.chip[data-filter]:not(.all)::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--c);margin-right:8px}
+.chip.on:not(.all)::before{background:currentColor}
+.chip.on.all{background:var(--bark);color:var(--paper);border-color:var(--bark)}
+.sect{margin-top:46px}
+.sect>header{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;border-bottom:1px solid var(--rule);padding-bottom:12px;margin-bottom:6px}
+.mrow{display:grid;grid-template-columns:110px 1fr 90px;gap:16px;align-items:center;padding:7px 0;border-bottom:1px solid #4b48351f}
+.mrow.now{color:var(--rust);font-weight:600}
+.mrow .track{margin:0}
+.mrow span:last-child{text-align:right;font-size:.92rem}
+.tog{display:flex;gap:22px;flex-wrap:wrap;margin:14px 0 8px;color:#7a775f;font-size:.95rem}
+.tog label,.opts label{cursor:pointer;display:flex;gap:8px;align-items:center}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:22px;margin-top:20px}
+.card{padding:0;text-align:left;color:inherit;background:transparent;border:0;border-radius:0;display:block;width:100%;font-weight:400}
+.card:hover{background:transparent}
+.card:hover .cover{box-shadow:0 14px 28px -14px #4b483580}
+.card .b{padding:12px 2px}
+.card h3{margin-bottom:6px}
+.cover{aspect-ratio:4/3;border-radius:16px;background:var(--stone);display:flex;align-items:center;justify-content:center;font:italic 600 4rem var(--head);color:#8f8d72;position:relative;overflow:hidden;box-shadow:0 10px 24px -16px #4b483580;transition:box-shadow .2s}
+.cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.new{display:flex;align-items:center;justify-content:center;aspect-ratio:4/3;border:1px dashed var(--olive);border-radius:16px;color:var(--olive);font-family:var(--head);font-weight:600;font-style:italic;font-size:1.3rem;text-align:center}
+.new:hover{background:#62673612}
+.hero{display:grid;grid-template-columns:240px 1fr;gap:34px;align-items:center;padding:28px 0 8px}
+.hero h1{font-size:clamp(2.4rem,7vw,4rem)}
+.hero .cover{aspect-ratio:1}
+.sec{border-radius:20px;background:var(--paper);border:1px solid #b9b7a24d;padding:22px 26px;margin-top:18px}
+.sec header{display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid var(--rule);padding-bottom:8px;margin-bottom:4px}
+.line{display:flex;align-items:center;gap:8px;padding:8px 2px;border-bottom:1px solid #4b48351f}
+.line label{flex:1;display:flex;gap:12px;align-items:center;cursor:pointer}
+.line.edit{flex-wrap:wrap}
+.line.edit input[name=num]{width:120px}.line.edit input[name=text]{flex:1;min-width:160px;width:auto}
+input[type=checkbox]{appearance:none;-webkit-appearance:none;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--olive);background:transparent;flex:none;cursor:pointer;margin:0}
+input[type=checkbox]:checked{background:var(--olive) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.500l4 4L18 8' fill='none' stroke='%23f3f2e6' stroke-width='2.600' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/17px no-repeat}
+input[type=radio]{accent-color:var(--olive);width:17px;height:17px}
+.line.done .t{text-decoration:line-through;color:#8c8970}
+.line small{color:#7a775f;font-size:.8rem;white-space:nowrap}
+.add{display:grid;grid-template-columns:auto minmax(80px,130px) auto 1fr auto;gap:8px;align-items:center;margin-top:14px}
+.add b{font-weight:500}
+.pat{background:var(--bark);color:var(--cream);border-radius:24px;padding:28px 32px;margin-top:46px}
+.pat h2{color:var(--paper)}
+.pat .sub{color:#cfcdb4}
+.pat button.ghost{color:var(--paper);border-color:#e8e7d680}
+.pat button.ghost:hover{background:#ffffff18}
+.pat button:not(.ghost){background:var(--cream);color:var(--bark);border-color:var(--cream)}
+.viewer{margin-top:18px;display:grid;gap:12px}
+.viewer canvas,.viewer img{width:100%;height:auto;border-radius:10px;background:#fff;display:block}
+.scrim{position:fixed;inset:0;background:#4b483599;display:flex;align-items:flex-start;justify-content:center;padding:4vh 14px;overflow:auto;z-index:10}
+.scrim[hidden]{display:none}
+.sheet{background:var(--paper);border-radius:22px;padding:26px;max-width:480px;width:100%;box-shadow:0 24px 60px -12px #4b4835aa}
+.sheet h2{font-size:1.9rem;margin-bottom:6px}
+.sheet label.f{display:block;margin:14px 0 4px;font-weight:500}
+.opts{display:flex;gap:22px;flex-wrap:wrap}
+.q{background:#e8e7d6;border-radius:14px;padding:10px 16px;margin:10px 0}
+.q .mrow{grid-template-columns:110px 1fr}
+.q .mrow input{max-width:110px}
+.empty{color:#7a775f;font-style:italic}
+.banner{background:#e6d3a8;border-radius:12px;padding:10px 14px;margin-top:14px}
+#err{position:fixed;left:12px;right:12px;bottom:12px;background:var(--rust);color:#fff;padding:10px 14px;border-radius:12px;z-index:20}
+#err[hidden]{display:none}
+footer{margin-top:56px;color:#7a775f;font-size:.88rem;border-top:1px solid var(--rule);padding-top:14px}
+@media(max-width:700px){.goals{grid-template-columns:1fr}.goal+.goal{border-left:0;border-top:1px solid #e8e7d666;padding-left:0;margin-top:14px}.hero{grid-template-columns:1fr}.hero .cover{max-width:240px}.add{grid-template-columns:auto 1fr auto}.add input:nth-of-type(2){grid-column:1/-1}.mrow{grid-template-columns:84px 1fr 70px}.panel,.pat{padding:24px 20px}.deco{opacity:.25}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<div class="scrim" id="scrim" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+<div id="err" role="alert" hidden></div>
+
+<script>
+(()=>{
+/* No <form>, alert(), confirm() or <dialog>: those get blocked in some embedded or sandboxed views. */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,10);
+const showErr=m=>{const e=$('#err');e.textContent='Something went wrong: '+m;e.hidden=false;setTimeout(()=>e.hidden=true,8000)};
+addEventListener('error',e=>showErr(e.message));
+addEventListener('unhandledrejection',e=>showErr(e.reason&&e.reason.message||e.reason));
+
+let S={projects:[],goals:{},ui:{past:true,future:true}},canSave=true;
+try{const r=JSON.parse(localStorage.getItem('stitchlog')||'null');if(r)S=Object.assign(S,r);localStorage.setItem('stitchlog-test','1')}catch(e){canSave=false}
+const D=new Date(),CY=D.getFullYear(),CM=D.getMonth(),CQ=Math.floor(CM/3);
+const mk=(y,m)=>y+'-'+m;
+if(S.goals.month!==undefined||S.goals.quarter!==undefined||S.goals.year!==undefined){const o=S.goals;S.goals={};if(o.month)S.goals[mk(CY,CM)]=o.month}
+const save=()=>{try{localStorage.setItem('stitchlog',JSON.stringify(S));canSave=true}catch(e){canSave=false}};
+let page='home',showPat=false,focusSel=null,draft={},edY=CY,pend=null,editing=null,newImg='';
+
+let dbp=null;   /* pattern files live in IndexedDB so big PDFs fit */
+const idb=(mode,fn)=>{dbp=dbp||new Promise((ok,no)=>{const r=indexedDB.open('stitchlog-files',1);r.onupgradeneeded=()=>r.result.createObjectStore('f');r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)});
+  return dbp.then(d=>new Promise((ok,no)=>{const q=fn(d.transaction('f',mode).objectStore('f'));q.onsuccess=()=>ok(q.result);q.onerror=()=>no(q.error)}))};
+const readURL=f=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(r.result);r.onerror=()=>no(r.error);r.readAsDataURL(f)});
+const shrink=async(f,max=800)=>{const u=await readURL(f);return new Promise(ok=>{const i=new Image();i.onload=()=>{const k=Math.min(1,max/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=Math.round(i.width*k);c.height=Math.round(i.height*k);c.getContext('2d').drawImage(i,0,0,c.width,c.height);ok(c.toDataURL('image/jpeg',.82))};i.onerror=()=>ok(u);i.src=u})};
+
+const tally=()=>{const t={};S.projects.forEach(p=>p.sections.forEach(s=>s.lines.forEach(l=>{if(l.done){const d=new Date(l.done),k=mk(d.getFullYear(),d.getMonth());t[k]=(t[k]||0)+1}})));return t};
+const G=(y,m,g=S.goals)=>+g[mk(y,m)]||0;
+const sumM=(y,a,b,f)=>{let n=0;for(let m=a;m<=b;m++)n+=f(y,m);return n};
+const stats=p=>{const L=p.sections.flatMap(s=>s.lines);return[L.filter(l=>l.done).length,L.length]};
+const pct=(a,b)=>b?Math.min(100,Math.round(a/b*100)):0;
+const fmt=iso=>new Date(iso).toLocaleString(undefined,{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+const ST=['Future','Current','Finished'],TC={Future:'s',Current:'',Finished:'r'};
+const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const cover=p=>`<div class="cover">${esc((p.name||'?').trim()[0]||'?').toUpperCase()}${p.img?`<img src="${esc(p.img)}" alt="" onerror="this.remove()">`:''}</div>`;
+const track=(a,b,c='')=>`<div class="track ${c}" role="progressbar" aria-valuenow="${pct(a,b)}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct(a,b)}%"></i></div>`;
+const goalCol=(title,sub,done,target,note)=>`<div class="goal"><h3>${title}</h3><div class="sub">${sub}</div><div class="n">${done}${target?` <small>of ${target}</small>`:' <small>no goal set</small>'}</div>${track(done,target)}${note}</div>`;
+
+const modal=h=>{$('#sheet').innerHTML=h;$('#scrim').hidden=false;const f=$('#sheet input[type=text]');f&&(f.focus(),f.select&&f.select())};
+const closeModal=()=>{$('#scrim').hidden=true;$('#sheet').innerHTML='';pend=null};
+const ask=(msg,fn)=>{modal(`<p style="margin-top:0">${msg}</p><div class="row end"><button class="ghost" data-act="cno">Cancel</button><button data-act="cyes">Yes</button></div>`);pend=fn};
+
+function home(){
+  const flt=S.ui.filter||'All',stOf=p=>p.status||'Current';
+  const chips=['All',...ST].map(k=>`<button class="chip ${k==='All'?'all':'st-'+k} ${flt===k?'on':''}" data-filter="${k}" aria-pressed="${flt===k}">${k} <small>${k==='All'?S.projects.length:S.projects.filter(p=>stOf(p)===k).length}</small></button>`).join('');
+  const T=tally(),dn=(y,m)=>T[mk(y,m)]||0,q0=CQ*3;
+  const mG=G(CY,CM),mD=dn(CY,CM);
+  const behindQ=Math.max(0,sumM(CY,q0,CM-1,G)-sumM(CY,q0,CM-1,dn));
+  const mNote=!mG?'<span class="tag">Use the pencil to set a goal</span>':behindQ?`<span class="tag">${behindQ} behind from earlier this quarter, so aim for ${mG+behindQ}</span>`:mD>=mG?'<span class="tag">Goal reached</span>':`<span class="tag">${mG-mD} to go this month</span>`;
+  const qT=sumM(CY,q0,q0+2,G),qD=sumM(CY,q0,q0+2,dn),qNeed=Math.max(0,sumM(CY,q0,CM,G)-qD);
+  const yT=sumM(CY,0,11,G),yD=sumM(CY,0,11,dn),yNeed=Math.max(0,sumM(CY,0,CM,G)-yD);
+  const note=(t,n)=>!t?'':n?`<span class="tag">${n} more by the end of this month to stay on track</span>`:'<span class="tag">On track</span>';
+  const rows=MN.map((n,m)=>{const g=G(CY,m);if(m<CM&&!S.ui.past||m>CM&&!S.ui.future)return'';
+    return`<div class="mrow ${m===CM?'now':''}"><span>${n}</span>${track(dn(CY,m),g,'l '+(m<CM?'s':m>CM?'r':''))}<span>${dn(CY,m)}${g?' / '+g:''}</span></div>`}).join('');
+  const cards=S.projects.filter(p=>flt==='All'||stOf(p)===flt).map(p=>{const[a,b]=stats(p);return`<button class="card" data-open="${p.id}">${cover(p)}<div class="b"><h3>${esc(p.name)}</h3><span class="st st-${stOf(p)}">${stOf(p)}</span>${track(a,b,'l '+TC[stOf(p)])}<div class="sub">${a} of ${b} done</div></div></button>`}).join('');
+  return`<div class="topbar"><span class="pill">Stitch Log</span><span class="pill">Project hub</span></div>
+  ${canSave?'':'<div class="banner">Your browser isn’t letting this page save, so progress will be lost when you close it. Try opening the page in a normal browser tab.</div>'}
+  <section class="intro"><div class="deco"></div><h1>Stitch<br><em>Log</em></h1><p>Your projects, your patterns and your pace, all kept on this device.</p>
+  <div class="row"><button class="ghost" data-act="export">Save backup</button><button class="ghost" data-act="import">Restore backup</button><input type="file" id="imp" accept=".json" hidden></div></section>
+  <section class="panel dark"><div class="row between"><h2>Goals</h2><button class="ghost" data-act="editgoals" aria-label="Edit monthly goals">✎ Edit goals</button></div>
+  <div class="goals">${goalCol('This month',MN[CM]+' '+CY,mD,mG,mNote)}${goalCol('This quarter','Q'+(CQ+1)+' '+CY+', adds up your months',qD,qT,note(qT,qNeed))}${goalCol('This year',CY+', adds up your months',yD,yT,note(yT,yNeed))}</div></section>
+  <section class="sect"><header><h2>Month <em>by month</em></h2><span class="sub">${CY}</span></header>
+  <div class="tog"><label><input type="checkbox" data-ui="past" ${S.ui.past?'checked':''}> Show past months</label><label><input type="checkbox" data-ui="future" ${S.ui.future?'checked':''}> Show future months</label></div>${rows||'<p class="empty">Only the current month is showing.</p>'}</section>
+  <section class="sect"><header><h2>Your <em>projects</em></h2></header><div class="chips" role="group" aria-label="Filter projects by status">${chips}</div><div class="grid">${cards}<button class="card new" data-act="new">Start a new project</button></div></section>
+  <footer>Everything is saved in this browser only. Use “Save backup” to keep a copy of your progress. Pattern files and uploaded photos stay on this device and aren’t part of backups.</footer>`;
+}
+
+function project(p){
+  const[a,b]=stats(p),w=p.mode;
+  const secs=p.sections.map(s=>{const sa=s.lines.filter(l=>l.done).length;
+    const ls=s.lines.map(l=>editing&&editing.lid===l.id?
+      `<div class="line edit" data-enter><b>${w}</b><input type="text" name="num" value="${esc(l.num)}" aria-label="${w} number or title"><b>:</b><input type="text" name="text" value="${esc(l.text)}" aria-label="Notes"><button class="go" data-act="saveline" data-sid="${s.id}" data-lid="${l.id}">Save</button><button class="ghost" data-act="cancelline">Cancel</button></div>`:
+      `<div class="line ${l.done?'done':''}"><label><input type="checkbox" data-tick="${s.id}|${l.id}" ${l.done?'checked':''}><span class="t">${w} ${esc(l.num)}:${l.text?' '+esc(l.text):''}</span></label>${l.done?`<small>${fmt(l.done)}</small>`:''}<button class="x" data-el="${s.id}|${l.id}" aria-label="Edit line" title="Edit">✎</button><button class="x" data-dl="${s.id}|${l.id}" aria-label="Delete line" title="Delete">×</button></div>`).join('')||'<p class="empty">No lines yet. Add the first one below.</p>';
+    return`<section class="sec"><header><h3>${esc(s.name)}</h3><span class="row"><span class="sub">${sa}/${s.lines.length}</span><button class="x" data-es="${s.id}" aria-label="Rename section" title="Rename">✎</button><button class="x" data-ds="${s.id}" aria-label="Delete section" title="Delete section">×</button></span></header>${ls}
+    <div class="add" data-enter><b>${w}</b><input type="text" name="num" placeholder="5 or title" aria-label="${w} number or title"><b>:</b><input type="text" name="text" placeholder="Notes from pattern (optional)" aria-label="Notes"><button class="go" data-act="addline" data-sid="${s.id}">Add</button></div></section>`}).join('');
+  return`<div class="topbar"><button class="ghost" data-act="back">‹ All projects</button><span class="pill">${p.craft}, ${w.toLowerCase()}s</span></div>
+  <div class="hero">${cover(p)}<div><h1>${esc(p.name)}</h1>${track(a,b,'l '+TC[p.status||'Current'])}<div class="sub">${a} of ${b} ${w.toLowerCase()}s done</div>
+  <div class="chips" role="group" aria-label="Project status"><span class="sub">Status</span>${ST.map(k=>`<button class="chip st-${k} ${(p.status||'Current')===k?'on':''}" data-setst="${k}" aria-pressed="${(p.status||'Current')===k}">${k}</button>`).join('')}</div>
+  <div class="row" style="margin-top:14px"><button class="ghost" data-act="coverpick">Change photo</button><input type="file" id="coverfile" accept="image/*" hidden><button class="ghost" data-act="delproj">Delete project</button></div></div></div>
+  <section class="sect"><header><h2>Sections</h2></header>${secs}
+  <div class="row sec" data-enter><input type="text" id="secname" style="flex:1;min-width:160px" placeholder="New section, e.g. Neckline, Sleeves, Body" aria-label="Section name"><button class="go" data-act="addsec">Add section</button></div></section>
+  <section class="pat"><h2>Pattern</h2>${p.pattern?`<div class="row" style="margin-top:12px"><b>${esc(p.pattern.name)}</b><button data-act="viewpat">${showPat?'Hide':'View'} pattern</button><button class="ghost" data-act="openpat">Open in new tab</button><button class="ghost" data-act="dlpat">Download</button><button class="ghost" data-act="rmpat">Remove</button></div><div class="viewer" id="viewer"></div>`:
+  `<p class="sub" style="margin:10px 0">Upload a PDF or image of your pattern. It stays on your device and is never processed.</p><input type="file" id="patfile" accept="application/pdf,image/*"></div>`.replace(/<\/div>$/,'')}</section>`;
+}
+
+function render(){
+  const p=S.projects.find(x=>x.id===page);
+  if(!p)page='home';
+  $('#app').innerHTML=p?project(p):home();
+  if(p&&p.pattern&&showPat)mountPat(p);
+  if(focusSel){const e=$(focusSel);e&&e.focus();focusSel=null}
+}
+
+/* pattern viewer: PDFs are drawn onto canvases with pdf.js (browsers block PDFs inside embedded frames); images are shown from data URLs */
+const loadPdfjs=()=>window.pdfjsLib?Promise.resolve():new Promise((ok,no)=>{const s=document.createElement('script');const base='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';s.src=base+'pdf.min.js';
+  s.onload=()=>{pdfjsLib.GlobalWorkerOptions.workerSrc=base+'pdf.worker.min.js';ok()};s.onerror=()=>no(new Error('The PDF viewer could not load'));document.head.appendChild(s)});
+async function mountPat(p){
+  const v=$('#viewer');v.innerHTML='<p class="sub">Opening your pattern…</p>';
+  try{
+    const rec=await idb('readonly',s=>s.get(p.id));
+    if(!rec){v.innerHTML='<p class="sub">This pattern file isn’t stored on this device.</p>';return}
+    if(rec.type==='application/pdf'){
+      await loadPdfjs();
+      const pdf=await pdfjsLib.getDocument({data:await rec.arrayBuffer()}).promise;
+      v.innerHTML='';
+      for(let n=1;n<=pdf.numPages;n++){
+        const pg=await pdf.getPage(n),vp=pg.getViewport({scale:Math.min(2.2,Math.max(1,(v.clientWidth||800)*(devicePixelRatio||1)/pg.getViewport({scale:1}).width))});
+        const c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;v.appendChild(c);
+        await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
+      }
+    }else v.innerHTML=`<img src="${await readURL(rec)}" alt="Pattern">`;
+  }catch(x){
+    if($('#viewer'))$('#viewer').innerHTML=`<p class="sub">This view couldn’t show the pattern in the page (${esc(x.message||'blocked')}). Use “Open in new tab” or “Download” above instead.</p>`;
+  }
+}
+
+function newProject(){newImg='';modal(`<div data-enter><h2>A new project</h2>
+  <label class="f" for="pn">What are you making?</label><input type="text" id="pn" placeholder="e.g. Autumn cardigan">
+  <label class="f">Status</label><div class="opts"><label><input type="radio" name="status" value="Future"> Future</label><label><input type="radio" name="status" value="Current" checked> Current</label><label><input type="radio" name="status" value="Finished"> Finished</label></div>
+  <label class="f">Knitting or crochet?</label><div class="opts"><label><input type="radio" name="craft" value="Knitting" checked> Knitting</label><label><input type="radio" name="craft" value="Crochet"> Crochet</label></div>
+  <label class="f">Worked in rows or rounds?</label><div class="opts"><label><input type="radio" name="mode" value="Row" checked> Rows</label><label><input type="radio" name="mode" value="Round"> Rounds</label></div>
+  <label class="f" for="pi">Picture link (optional)</label><input type="text" id="pi" placeholder="Paste an image address">
+  <label class="f" for="pimg">Or upload a photo (optional)</label><input type="file" id="pimg" accept="image/*"><div class="sub" id="pimgok"></div>
+  <p id="perr" style="color:var(--rust);font-weight:500;min-height:1.4em;margin:12px 0 0" role="alert"></p>
+  <div class="row end"><button class="ghost" data-act="close">Cancel</button><button class="go" data-act="create">Cast on</button></div></div>`)}
+function create(){
+  const err=$('#perr');
+  try{
+    const name=$('#pn').value.trim();
+    if(!name){err.textContent='Please give your project a name first.';$('#pn').focus();return}
+    let img=newImg||$('#pi').value.trim();if(img&&!/^(https?:|data:)/i.test(img))img='https://'+img;
+    const p={id:uid(),name,craft:$('#sheet [name=craft]:checked').value,mode:$('#sheet [name=mode]:checked').value,status:$('#sheet [name=status]:checked').value,img,pattern:null,sections:[]};
+    S.projects.push(p);save();closeModal();page=p.id;showPat=false;editing=null;render();scrollTo(0,0);
+  }catch(x){err.textContent='Couldn’t create the project: '+x.message}
+}
+
+function totals(){for(let q=0;q<4;q++){const e=$('#qt'+q);if(e)e.textContent=sumM(edY,q*3,q*3+2,(y,m)=>G(y,m,draft))}const e=$('#yt');if(e)e.textContent=sumM(edY,0,11,(y,m)=>G(y,m,draft))}
+function drawGoals(){
+  const qs=[0,1,2,3].map(q=>`<div class="q"><div class="row between"><b>Q${q+1}</b><span class="sub">total <b id="qt${q}"></b></span></div>${[0,1,2].map(i=>{const m=q*3+i;return`<div class="mrow"><label for="gm${m}">${MN[m]}</label><input type="number" min="0" id="gm${m}" data-gm="${mk(edY,m)}" value="${G(edY,m,draft)||''}" placeholder="0"></div>`}).join('')}</div>`).join('');
+  modal(`<h2>Monthly goals</h2><p class="sub">Rows and rounds per month. Quarters and the year add up from these.</p>
+  <div class="row between" style="margin-top:10px"><button class="ghost" data-act="gprev" aria-label="Previous year">‹</button><b style="font:600 1.4rem var(--head)">${edY}</b><button class="ghost" data-act="gnext" aria-label="Next year">›</button></div>
+  <div class="sub" style="text-align:center">Year total: <b id="yt"></b></div>
+  <div class="row" style="margin:10px 0" data-enter><label for="allv" class="sub">Same goal every month:</label><input type="number" min="0" id="allv" style="width:90px" placeholder="0"><button class="ghost go" data-act="gall">Fill</button></div>
+  ${qs}<div class="row end" style="margin-top:14px"><button class="ghost" data-act="close">Cancel</button><button data-act="gsave">Save goals</button></div>`);
+  totals();
+}
+const download=(blob,name)=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click()};
+
+document.addEventListener('click',async e=>{
+  if(e.target.id==='scrim'){closeModal();return}
+  const t=e.target.closest('button,[data-open]');if(!t)return;
+  const p=S.projects.find(x=>x.id===page),d=t.dataset,a=d.act;
+  if(d.open){page=d.open;showPat=false;editing=null;render();scrollTo(0,0);return}
+  if(d.filter){S.ui.filter=d.filter;save();render();return}
+  if(d.setst){p.status=d.setst;save();render();return}
+  if(a==='new')newProject();
+  if(a==='create')create();
+  if(a==='close'||a==='cno')closeModal();
+  if(a==='cyes'){const f=pend;closeModal();f&&await f()}
+  if(a==='back'){page='home';showPat=false;editing=null;render()}
+  if(a==='editgoals'){draft={...S.goals};edY=CY;drawGoals()}
+  if(a==='gprev'){edY--;drawGoals()}
+  if(a==='gnext'){edY++;drawGoals()}
+  if(a==='gall'){const v=Math.max(0,+$('#allv').value||0);for(let m=0;m<12;m++)draft[mk(edY,m)]=v;drawGoals()}
+  if(a==='gsave'){Object.keys(draft).forEach(k=>{if(!draft[k])delete draft[k]});S.goals=draft;save();closeModal();render()}
+  if(a==='export')download(new Blob([JSON.stringify(S,null,1)],{type:'application/json'}),'stitch-log-backup.json');
+  if(a==='import')$('#imp').click();
+  if(a==='coverpick')$('#coverfile').click();
+  if(a==='delproj')ask('Delete this project and its pattern?',async()=>{try{await idb('readwrite',s=>s.delete(p.id))}catch(x){}S.projects=S.projects.filter(x=>x!==p);save();page='home';render()});
+  if(a==='viewpat'){showPat=!showPat;render()}
+  if(a==='rmpat')ask('Remove the pattern file?',async()=>{try{await idb('readwrite',s=>s.delete(p.id))}catch(x){}p.pattern=null;showPat=false;save();render()});
+  if(a==='dlpat'){const r=await idb('readonly',s=>s.get(p.id));download(r,p.pattern.name)}
+  if(a==='openpat'){const r=await idb('readonly',s=>s.get(p.id));const w=window.open(URL.createObjectURL(r),'_blank');if(!w)showErr('your browser blocked the new tab. Try “Download” instead.')}
+  if(a==='addline'){const box=t.closest('.add'),n=box.querySelector('[name=num]'),num=n.value.trim();if(!num){n.focus();return}
+    p.sections.find(s=>s.id===d.sid).lines.push({id:uid(),num,text:box.querySelector('[name=text]').value.trim(),done:null});save();render();
+    document.querySelector(`[data-act=addline][data-sid="${d.sid}"]`).closest('.add').querySelector('[name=num]').focus()}
+  if(a==='saveline'){const box=t.closest('.line'),n=box.querySelector('[name=num]'),num=n.value.trim();if(!num){n.focus();return}
+    const l=p.sections.find(s=>s.id===d.sid).lines.find(x=>x.id===d.lid);l.num=num;l.text=box.querySelector('[name=text]').value.trim();editing=null;save();render()}
+  if(a==='cancelline'){editing=null;render()}
+  if(d.el){const[sid,lid]=d.el.split('|');editing={sid,lid};render();const i=$('.line.edit input');i&&i.focus()}
+  if(a==='addsec'){const n=$('#secname'),v=n.value.trim();if(!v){n.focus();return}p.sections.push({id:uid(),name:v,lines:[]});save();render();$('#secname').focus()}
+  if(d.es){const s=p.sections.find(x=>x.id===d.es);modal(`<div data-enter><h2>Rename section</h2><input type="text" id="secrename" value="${esc(s.name)}"><div class="row end" style="margin-top:14px"><button class="ghost" data-act="close">Cancel</button><button class="go" data-act="savesec" data-sid="${s.id}">Save</button></div></div>`)}
+  if(a==='savesec'){const v=$('#secrename').value.trim();if(!v){$('#secrename').focus();return}p.sections.find(x=>x.id===d.sid).name=v;save();closeModal();render()}
+  if(d.ds)ask('Delete this section and all its lines?',()=>{p.sections=p.sections.filter(s=>s.id!==d.ds);save();render()});
+  if(d.dl){const[si,li]=d.dl.split('|'),s=p.sections.find(x=>x.id===si);s.lines=s.lines.filter(l=>l.id!==li);save();render()}
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){if(!$('#scrim').hidden)closeModal();else if(editing){editing=null;render()}}
+  if(e.key==='Enter'&&e.target.tagName==='INPUT'){const c=e.target.closest('[data-enter]');const b=c&&c.querySelector('button.go');if(b){e.preventDefault();b.click()}}
+});
+document.addEventListener('input',e=>{const t=e.target;if(t.dataset.gm){draft[t.dataset.gm]=Math.max(0,+t.value||0);totals()}});
+document.addEventListener('change',async e=>{
+  const t=e.target,p=S.projects.find(x=>x.id===page);
+  if(t.dataset.ui){S.ui[t.dataset.ui]=t.checked;save();render()}
+  if(t.dataset.tick){const[si,li]=t.dataset.tick.split('|'),l=p.sections.find(s=>s.id===si).lines.find(x=>x.id===li);
+    l.done=t.checked?new Date().toISOString():null;save();render()}   /* tick stamps the time, untick clears it, so the goal count drops */
+  if(t.id==='pimg'&&t.files[0]){newImg=await shrink(t.files[0]);$('#pimgok').textContent='Photo added: '+t.files[0].name}
+  if(t.id==='coverfile'&&t.files[0]){p.img=await shrink(t.files[0]);save();render()}
+  if(t.id==='patfile'&&t.files[0]){const f=t.files[0];try{await idb('readwrite',s=>s.put(f,p.id))}catch(x){showErr('your browser blocked file storage, so the pattern could not be saved.');return}p.pattern={name:f.name};showPat=true;save();render()}
+  if(t.id==='imp'&&t.files[0]){try{const r=JSON.parse(await t.files[0].text());if(!Array.isArray(r.projects))throw 0;
+    ask('Replace everything here with this backup?',()=>{S=Object.assign({projects:[],goals:{},ui:{past:true,future:true}},r);save();page='home';render()})}catch(x){showErr('that file doesn’t look like a Stitch Log backup.')}}
+});
+render();
+})();
+</script>
+</body>
+</html>
