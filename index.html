@@ -91,6 +91,11 @@ input[type=text]:focus,input[type=number]:focus,input[type=password]:focus{outli
 .hero .cover{aspect-ratio:1}
 .sec{border-radius:20px;background:var(--paper);border:1px solid #b9b7a24d;padding:22px 26px;margin-top:18px}
 .sec header{display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid var(--rule);padding-bottom:8px;margin-bottom:4px}
+.sec h3 .tg{background:none;border:0;color:inherit;font:inherit;padding:2px 0;display:flex;gap:10px;align-items:center;text-align:left;border-radius:8px;cursor:pointer}
+.sec h3 .tg:hover{background:none;color:var(--bark)}
+.chev{width:9px;height:9px;border-right:2px solid var(--olive);border-bottom:2px solid var(--olive);transform:rotate(45deg);transition:transform .2s;margin:0 4px 4px 3px;flex:none}
+.tg[aria-expanded=false] .chev{transform:rotate(-45deg);margin-bottom:0}
+.sec.shut header{border-bottom:0;margin-bottom:0;padding-bottom:0}
 .line{display:flex;align-items:center;gap:8px;padding:8px 2px;border-bottom:1px solid #4b48351f}
 .line label{flex:1;display:flex;gap:12px;align-items:center;cursor:pointer}
 .line.edit{flex-wrap:wrap}
@@ -205,13 +210,14 @@ function project(p){
     const ls=s.lines.map(l=>editing&&editing.lid===l.id?
       `<div class="line edit" data-enter><b>${w}</b><input type="text" name="num" value="${esc(l.num)}" aria-label="${w} number or title"><b>:</b><input type="text" name="text" value="${esc(l.text)}" aria-label="Notes"><button class="go" data-act="saveline" data-sid="${s.id}" data-lid="${l.id}">Save</button><button class="ghost" data-act="cancelline">Cancel</button></div>`:
       `<div class="line ${l.done?'done':''}"><label><input type="checkbox" data-tick="${s.id}|${l.id}" ${l.done?'checked':''}><span class="t">${w} ${esc(l.num)}:${l.text?' '+esc(l.text):''}</span></label>${l.done?`<small>${fmt(l.done)}</small>`:''}<button class="x" data-el="${s.id}|${l.id}" aria-label="Edit line" title="Edit">✎</button><button class="x" data-dl="${s.id}|${l.id}" aria-label="Delete line" title="Delete">×</button></div>`).join('')||'<p class="empty">No lines yet. Add the first one below.</p>';
-    return`<section class="sec"><header><h3>${esc(s.name)}</h3><span class="row"><span class="sub">${sa}/${s.lines.length}</span><button class="x" data-es="${s.id}" aria-label="Rename section" title="Rename">✎</button><button class="x" data-ds="${s.id}" aria-label="Delete section" title="Delete section">×</button></span></header>${ls}
-    <div class="add" data-enter><b>${w}</b><input type="text" name="num" placeholder="5 or title" aria-label="${w} number or title"><b>:</b><input type="text" name="text" placeholder="Notes from pattern (optional)" aria-label="Notes"><button class="go" data-act="addline" data-sid="${s.id}">Add</button></div></section>`}).join('');
+    const open=!s.collapsed;
+    return`<section class="sec ${open?'':'shut'}"><header><h3><button class="tg" data-tg="${s.id}" aria-expanded="${open}" title="${open?'Collapse':'Expand'} section"><span class="chev" aria-hidden="true"></span>${esc(s.name)}</button></h3><span class="row"><span class="sub">${sa}/${s.lines.length}</span><button class="x" data-dup="${s.id}" aria-label="Duplicate section" title="Duplicate section">⧉</button><button class="x" data-es="${s.id}" aria-label="Rename section" title="Rename">✎</button><button class="x" data-ds="${s.id}" aria-label="Delete section" title="Delete section">×</button></span></header>${open?ls+`
+    <div class="add" data-enter><b>${w}</b><input type="text" name="num" placeholder="5 or title" aria-label="${w} number or title"><b>:</b><input type="text" name="text" placeholder="Notes from pattern (optional)" aria-label="Notes"><button class="go" data-act="addline" data-sid="${s.id}">Add</button></div>`:''}</section>`}).join('');
   return`<div class="topbar"><button class="ghost" data-act="back">‹ All projects</button><span class="pill">${p.craft}, ${w.toLowerCase()}s</span></div>
   <div class="hero">${cover(p)}<div><h1>${esc(p.name)}</h1>${track(a,b,'l '+TC[p.status||'Current'])}<div class="sub">${a} of ${b} ${w.toLowerCase()}s done</div>
   <div class="chips" role="group" aria-label="Project status"><span class="sub">Status</span>${ST.map(k=>`<button class="chip st-${k} ${(p.status||'Current')===k?'on':''}" data-setst="${k}" aria-pressed="${(p.status||'Current')===k}">${k}</button>`).join('')}</div>
   <div class="row" style="margin-top:14px"><button class="ghost" data-act="coverpick">Change photo</button><input type="file" id="coverfile" accept="image/*" hidden><button class="ghost" data-act="delproj">Delete project</button></div></div></div>
-  <section class="sect"><header><h2>Sections</h2></header>${secs}
+  <section class="sect"><header><h2>Sections</h2>${p.sections.length>1?'<span class="row"><button class="ghost" data-act="colall">Collapse all</button><button class="ghost" data-act="expall">Expand all</button></span>':''}</header>${secs}
   <div class="row sec" data-enter><input type="text" id="secname" style="flex:1;min-width:160px" placeholder="New section, e.g. Neckline, Sleeves, Body" aria-label="Section name"><button class="go" data-act="addsec">Add section</button></div></section>
   <section class="pat"><h2>Pattern</h2>${p.pattern?`<div class="row" style="margin-top:12px"><b>${esc(p.pattern.name)}</b><button data-act="viewpat">${showPat?'Hide':'View'} pattern</button><button class="ghost" data-act="openpat">Open in new tab</button><button class="ghost" data-act="dlpat">Download</button><button class="ghost" data-act="rmpat">Remove</button></div><div class="viewer" id="viewer"></div>`:
   `<p class="sub" style="margin:10px 0">Upload a PDF or image of your pattern. It stays on your device and is never processed.</p><input type="file" id="patfile" accept="application/pdf,image/*"></div>`.replace(/<\/div>$/,'')}</section>`;
@@ -248,6 +254,7 @@ async function mountPat(p){
   }
 }
 
+function renameSec(s){modal(`<div data-enter><h2>Section name</h2><input type="text" id="secrename" value="${esc(s.name)}"><p class="sub" style="margin:8px 0 0">Edit the rows and notes afterwards with the ✎ beside each line.</p><div class="row end" style="margin-top:14px"><button class="ghost" data-act="close">Cancel</button><button class="go" data-act="savesec" data-sid="${s.id}">Save</button></div></div>`)}
 function newProject(){newImg='';modal(`<div data-enter><h2>A new project</h2>
   <label class="f" for="pn">What are you making?</label><input type="text" id="pn" placeholder="e.g. Autumn cardigan">
   <label class="f">Status</label><div class="opts"><label><input type="radio" name="status" value="Future"> Future</label><label><input type="radio" name="status" value="Current" checked> Current</label><label><input type="radio" name="status" value="Finished"> Finished</label></div>
@@ -319,7 +326,12 @@ document.addEventListener('click',async e=>{
   if(a==='cancelline'){editing=null;render()}
   if(d.el){const[sid,lid]=d.el.split('|');editing={sid,lid};render();const i=$('.line.edit input');i&&i.focus()}
   if(a==='addsec'){const n=$('#secname'),v=n.value.trim();if(!v){n.focus();return}p.sections.push({id:uid(),name:v,lines:[]});save();render();$('#secname').focus()}
-  if(d.es){const s=p.sections.find(x=>x.id===d.es);modal(`<div data-enter><h2>Rename section</h2><input type="text" id="secrename" value="${esc(s.name)}"><div class="row end" style="margin-top:14px"><button class="ghost" data-act="close">Cancel</button><button class="go" data-act="savesec" data-sid="${s.id}">Save</button></div></div>`)}
+  if(d.es)renameSec(p.sections.find(x=>x.id===d.es));
+  if(d.tg){const s=p.sections.find(x=>x.id===d.tg);s.collapsed=!s.collapsed;save();render();const b=document.querySelector(`[data-tg="${d.tg}"]`);b&&b.focus()}
+  if(a==='colall'||a==='expall'){p.sections.forEach(s=>s.collapsed=a==='colall');save();render()}
+  if(d.dup){   /* copies the section's lines unticked, so goal counts aren't doubled */
+    const i=p.sections.findIndex(x=>x.id===d.dup),o=p.sections[i],c={id:uid(),name:o.name+' (copy)',collapsed:false,lines:o.lines.map(l=>({id:uid(),num:l.num,text:l.text,done:null}))};
+    p.sections.splice(i+1,0,c);save();render();renameSec(c)}
   if(a==='savesec'){const v=$('#secrename').value.trim();if(!v){$('#secrename').focus();return}p.sections.find(x=>x.id===d.sid).name=v;save();closeModal();render()}
   if(d.ds)ask('Delete this section and all its lines?',()=>{p.sections=p.sections.filter(s=>s.id!==d.ds);save();render()});
   if(d.dl){const[si,li]=d.dl.split('|'),s=p.sections.find(x=>x.id===si);s.lines=s.lines.filter(l=>l.id!==li);save();render()}
