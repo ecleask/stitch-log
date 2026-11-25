@@ -8,8 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500..800;1,500..800&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-/* Optional: drop your licensed Dream Avenue files into a "fonts" folder next to this page (DreamAvenue.woff2, .otf or .ttf) and it is used automatically. Without them, Playfair Display is used. */
-@font-face{font-family:"Dream Avenue";src:local("Dream Avenue"),local("DreamAvenue"),url("fonts/DreamAvenue.woff2") format("woff2"),url("fonts/DreamAvenue.otf") format("opentype"),url("fonts/DreamAvenue.ttf") format("truetype");font-weight:100 900;font-style:normal;font-display:swap}
+/* Dream Avenue is loaded from fonts/Dream Avenue.otf in this repo (several other file names also work). Without it, Playfair Display is used. */
+@font-face{font-family:"Dream Avenue";src:local("Dream Avenue"),url("fonts/Dream%20Avenue.otf") format("opentype"),url("fonts/Dream%20Avenue.ttf") format("truetype"),url("fonts/Dream%20Avenue.woff2") format("woff2"),url("fonts/Dream%20Avenue%20Regular.otf") format("opentype"),url("fonts/DreamAvenue.otf") format("opentype"),url("fonts/DreamAvenue.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
 :root{--cream:#e8e7d6;--paper:#f3f2e6;--stone:#cecfbf;--olive:#626736;--bark:#4b4835;--rust:#793c05;--rule:#4b483540;--head:"Dream Avenue","Playfair Display",Georgia,serif;--body:"Jost","Avenir Next","Century Gothic",system-ui,sans-serif}
 *{box-sizing:border-box}
 html{background:#e4e2d0}
@@ -29,8 +29,8 @@ button.ghost:hover{background:#62673618}
 button.x{border:0;background:none;color:#7d7a62;padding:2px 8px;font-size:1.05rem;line-height:1}
 button.x:hover{color:var(--rust);background:none}
 :focus-visible{outline:2px solid var(--rust);outline-offset:2px}
-input[type=text],input[type=number]{background:#faf9f0;border:1px solid #b9b7a2;border-radius:10px;padding:8px 12px;width:100%}
-input[type=text]:focus,input[type=number]:focus{outline:none;border-color:var(--olive);box-shadow:0 0 0 3px #62673633}
+input[type=text],input[type=number],input[type=password]{background:#faf9f0;border:1px solid #b9b7a2;border-radius:10px;padding:8px 12px;width:100%}
+input[type=text]:focus,input[type=number]:focus,input[type=password]:focus{outline:none;border-color:var(--olive);box-shadow:0 0 0 3px #62673633}
 .pill{display:inline-block;border:1px solid var(--bark);border-radius:999px;padding:1px 16px;font-size:.85rem;background:#ffffff40}
 .topbar{display:flex;justify-content:space-between;align-items:center}
 .sub{color:#7a775f;margin:2px 0 0;font-size:.95rem}
@@ -148,7 +148,8 @@ try{const r=JSON.parse(localStorage.getItem('stitchlog')||'null');if(r)S=Object.
 const D=new Date(),CY=D.getFullYear(),CM=D.getMonth(),CQ=Math.floor(CM/3);
 const mk=(y,m)=>y+'-'+m;
 if(S.goals.month!==undefined||S.goals.quarter!==undefined||S.goals.year!==undefined){const o=S.goals;S.goals={};if(o.month)S.goals[mk(CY,CM)]=o.month}
-const save=()=>{try{localStorage.setItem('stitchlog',JSON.stringify(S));canSave=true}catch(e){canSave=false}};
+const saveLocal=()=>{try{localStorage.setItem('stitchlog',JSON.stringify(S));canSave=true}catch(e){canSave=false}};
+const save=()=>{saveLocal();if(SY){ver++;SY.dirty=true;saveSY();clearTimeout(pushT);pushT=setTimeout(push,1200);setMsg('Cloud sync: saving…')}};
 let page='home',showPat=false,focusSel=null,draft={},edY=CY,pend=null,editing=null,newImg='';
 
 let dbp=null;   /* pattern files live in IndexedDB so big PDFs fit */
@@ -189,7 +190,7 @@ function home(){
   return`<div class="topbar"><span class="pill">Stitch Log</span><span class="pill">Project hub</span></div>
   ${canSave?'':'<div class="banner">Your browser isn’t letting this page save, so progress will be lost when you close it. Try opening the page in a normal browser tab.</div>'}
   <section class="intro"><div class="deco"></div><h1>Stitch<br><em>Log</em></h1><p>Your projects, your patterns and your pace, all kept on this device.</p>
-  <div class="row"><button class="ghost" data-act="export">Save backup</button><button class="ghost" data-act="import">Restore backup</button><input type="file" id="imp" accept=".json" hidden></div></section>
+  <div class="row"><button class="ghost" data-act="export">Save backup</button><button class="ghost" data-act="import">Restore backup</button><button class="ghost" data-act="syncset">Cloud sync</button><input type="file" id="imp" accept=".json" hidden></div><p class="sub" id="syncmsg" style="margin:12px 0 0">${esc(syncMsg)}</p></section>
   <section class="panel dark"><div class="row between"><h2>Goals</h2><button class="ghost" data-act="editgoals" aria-label="Edit monthly goals">✎ Edit goals</button></div>
   <div class="goals">${goalCol('This month',MN[CM]+' '+CY,mD,mG,mNote)}${goalCol('This quarter','Q'+(CQ+1)+' '+CY+', adds up your months',qD,qT,note(qT,qNeed))}${goalCol('This year',CY+', adds up your months',yD,yT,note(yT,yNeed))}</div></section>
   <section class="sect"><header><h2>Month <em>by month</em></h2><span class="sub">${CY}</span></header>
@@ -286,6 +287,12 @@ document.addEventListener('click',async e=>{
   if(d.open){page=d.open;showPat=false;editing=null;render();scrollTo(0,0);return}
   if(d.filter){S.ui.filter=d.filter;save();render();return}
   if(d.setst){p.status=d.setst;save();render();return}
+  if(a==='syncset')syncModal();
+  if(a==='suconnect')await suConnect();
+  if(a==='sunow'){closeModal();pull()}
+  if(a==='sudisc')ask('Disconnect cloud sync? Your data stays on this device and in your sheet.',()=>{SY=null;saveSY();setMsg('Cloud sync is off. Your data is saved on this device only.');render()});
+  if(a==='synccloud'&&pendR)adopt(pendR);
+  if(a==='syncdevice'&&pendR){SY.rev=pendR.rev;SY.dirty=true;saveSY();closeModal();push()}
   if(a==='new')newProject();
   if(a==='create')create();
   if(a==='close'||a==='cno')closeModal();
@@ -333,7 +340,59 @@ document.addEventListener('change',async e=>{
   if(t.id==='imp'&&t.files[0]){try{const r=JSON.parse(await t.files[0].text());if(!Array.isArray(r.projects))throw 0;
     ask('Replace everything here with this backup?',()=>{S=Object.assign({projects:[],goals:{},ui:{past:true,future:true}},r);save();page='home';render()})}catch(x){showErr('that file doesn’t look like a Stitch Log backup.')}}
 });
-render();
+/* ---- cloud sync through your own Google Sheet (an Apps Script web app you set up) ---- */
+let SY=null;try{SY=JSON.parse(localStorage.getItem('stitchlog-sync')||'null')}catch(e){}
+const saveSY=()=>{try{SY?localStorage.setItem('stitchlog-sync',JSON.stringify(SY)):localStorage.removeItem('stitchlog-sync')}catch(e){}};
+let syncMsg=SY?'Cloud sync: connecting…':'Cloud sync is off. Your data is saved on this device only.',busy=false,pushT=null,ver=0,pendR=null;
+const tm=()=>new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+const setMsg=m=>{syncMsg=m;const e=$('#syncmsg');if(e)e.textContent=m};
+const offline=x=>setMsg(/key/i.test(x.message)?'Cloud sync: the key doesn’t match. Check Cloud sync settings.':'Cloud sync: can’t reach your sheet. Changes are kept here and will sync later.');
+const stripped=()=>JSON.parse(JSON.stringify({...S,projects:S.projects.map(p=>({...p,img:(p.img||'').startsWith('data:')?'':p.img}))}));   /* uploaded photos stay on the device */
+const api=body=>fetch(body?SY.url:SY.url+(SY.url.includes('?')?'&':'?')+'key='+encodeURIComponent(SY.key)+'&t='+Date.now(),body?{method:'POST',body:JSON.stringify({key:SY.key,...body})}:{}).then(r=>r.json());
+function adopt(r){
+  const old=Object.fromEntries(S.projects.map(p=>[p.id,p])),ns=r.state||{};
+  ns.projects=(ns.projects||[]).map(p=>({...p,img:p.img||(old[p.id]&&old[p.id].img)||''}));
+  S=Object.assign({projects:[],goals:{},ui:{past:true,future:true}},ns);
+  saveLocal();SY.rev=r.rev;SY.dirty=false;saveSY();pendR=null;closeModal();setMsg('Cloud sync: up to date, '+tm());render();
+}
+function conflict(r){pendR=r;modal('<h2>Which copy do you want?</h2><p>Your Google Sheet and this device each have changes the other doesn’t. Choose the copy to keep. The other one is replaced.</p><div class="row end"><button class="ghost" data-act="synccloud">Use cloud copy</button><button data-act="syncdevice">Keep this device</button></div>')}
+async function push(){
+  if(!SY||busy)return;busy=true;const v=ver;
+  try{
+    const r=await api({baseRev:SY.rev||0,state:stripped()});
+    if(r.conflict){busy=false;conflict(r);return}
+    if(!r.ok)throw new Error(r.error||'Could not save');
+    SY.rev=r.rev;SY.dirty=v!==ver;saveSY();setMsg('Cloud sync: saved, '+tm());busy=false;if(SY.dirty)push();
+  }catch(x){busy=false;offline(x)}
+}
+async function pull(){
+  if(!SY||busy)return;busy=true;let r;
+  try{r=await api();if(!r.ok)throw new Error(r.error||'Could not load')}catch(x){busy=false;offline(x);return}
+  busy=false;
+  const local=S.projects.length>0||Object.keys(S.goals).length>0;
+  if(!r.rev){SY.dirty=true;return push()}
+  if(r.rev===SY.rev)return SY.dirty?push():setMsg('Cloud sync: up to date, '+tm());
+  if(!local||(!SY.dirty&&SY.rev))return adopt(r);
+  conflict(r);
+}
+function syncModal(){modal(`<div data-enter><h2>Cloud sync</h2><p class="sub" style="margin-bottom:6px">Saves your projects and goals to your own Google Sheet so your phone and computer match. Paste the two values from the setup steps.</p>
+  <label class="f" for="suurl">Web app URL</label><input type="text" id="suurl" value="${esc(SY?SY.url:'')}" placeholder="https://script.google.com/macros/s/…/exec">
+  <label class="f" for="sukey">Secret key</label><input type="password" id="sukey" value="${esc(SY?SY.key:'')}" placeholder="The key you chose in the script">
+  <p id="suerr" style="color:var(--rust);font-weight:500;min-height:1.4em;margin:12px 0 0" role="alert"></p>
+  <div class="row end">${SY?'<button class="ghost" data-act="sudisc">Disconnect</button><button class="ghost" data-act="sunow">Sync now</button>':''}<button class="ghost" data-act="close">Close</button><button class="go" data-act="suconnect">${SY?'Update':'Connect'}</button></div></div>`)}
+async function suConnect(){
+  const err=$('#suerr'),url=$('#suurl').value.trim(),key=$('#sukey').value.trim();
+  if(!/^https:\/\/script\.google\.com\//.test(url)){err.textContent='That doesn’t look like a Google Apps Script web app address.';return}
+  if(!key){err.textContent='Enter the secret key from your script.';return}
+  const prev=SY,same=prev&&prev.url===url;SY={url,key,rev:same?prev.rev:0,dirty:same?prev.dirty:false};
+  err.textContent='Checking…';
+  try{const r=await api();if(!r.ok)throw new Error(r.error==='Wrong key'?'That key doesn’t match the one in your script.':r.error||'No answer')}
+  catch(x){SY=prev;err.textContent=x instanceof TypeError||x instanceof SyntaxError?'Couldn’t reach the script. Check the address, and that access is set to “Anyone”.':x.message;return}
+  saveSY();closeModal();setMsg('Cloud sync: connected');render();pull();
+}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&SY)SY.dirty?push():pull()});
+addEventListener('online',()=>{if(SY&&SY.dirty)push()});
+render();if(SY)pull();
 })();
 </script>
 </body>
